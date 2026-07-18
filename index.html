@@ -32,6 +32,28 @@
 <!-- will be copied to the resulting head //-->
 </head>
 <body>
+	<script>
+async function fetchParts(baseName, parts) {
+    const chunks = [];
+
+    for (let i = 1; i <= parts; i++) {
+        const part = String(i).padStart(2, '0');
+        const response = await fetch(`${baseName}.part${part}`);
+        chunks.push(await response.arrayBuffer());
+    }
+
+    const total = chunks.reduce((s, c) => s + c.byteLength, 0);
+    const merged = new Uint8Array(total);
+
+    let offset = 0;
+    for (const chunk of chunks) {
+        merged.set(new Uint8Array(chunk), offset);
+        offset += chunk.byteLength;
+    }
+
+    return merged.buffer;
+}
+</script>
 	<script src="https://game-cdn.poki.com/loaders/v3/master-loader.js"></script>
 <!-- will be copied to the resulting body //-->
 <!-- will also be copied to the resulting body //-->
